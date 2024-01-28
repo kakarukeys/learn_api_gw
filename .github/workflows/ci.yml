@@ -52,8 +52,8 @@ jobs:
       - name: Get temporary credentials from AWS STS
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${envs.BUILD_ROLE_ARN}
-          aws-region: ${envs.AWS_REGION}
+          aws-region: ${env.AWS_REGION}
+          role-to-assume: ${env.BUILD_ROLE_ARN}
 
       - name: Login to Amazon ECR
         id: login-ecr
