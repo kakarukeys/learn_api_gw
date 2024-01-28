@@ -78,6 +78,6 @@ jobs:
 
       - name: Tag Github repo
         run: |
-          GIT_TAG="v${{ stips.build-publish-docker.outputs.IMAGE_TAG }}"
+          GIT_TAG="v${{ steps.build-publish-docker.outputs.IMAGE_TAG }}"
           git tag -a "$GIT_TAG" -m "tagged by GHA $GIT_TAG"
           git push origin "$GIT_TAG"
