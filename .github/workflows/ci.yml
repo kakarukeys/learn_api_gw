@@ -29,7 +29,7 @@ jobs:
           version: 1.7.1
           virtualenvs-in-project: true
 
-      - name: Restore Python virtual environment
+      - name: Restore Python virtual environment from cache
         uses: actions/cache@v4
         with:
           path: .venv
