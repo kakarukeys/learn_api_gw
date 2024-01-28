@@ -103,10 +103,16 @@ jobs:
           git push origin "$GIT_TAG"
 
       - name: Invoke CD workflow
-        uses: benc-uk/workflow-dispatch@v1
+        uses: actions/github-script@v6
         with:
-          repo: kakarukeys/learn_lambda_docker
-          ref: main
-          workflow: cd.yml
-          inputs: '{"env": "dev", "images": "{\"${{ env.IMAGE_NAME }}\": \"${{ env.IMAGE_TAG }}\"}"}'
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'learn_lambda_docker',
+              ref: 'main',
+              workflow_id: 'cd.yml',
+              inputs: {
+                env: 'dev',
+                images: '{"${{ env.IMAGE_NAME }}": "${{ env.IMAGE_TAG }}"}'
+              }
+            })
