@@ -103,17 +103,18 @@ jobs:
           git tag -a "$GIT_TAG" -m "tagged by GHA $GIT_TAG"
           git push origin "$GIT_TAG"
 
-      # - name: Invoke CD workflow
-      #   uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #       github.rest.actions.createWorkflowDispatch({
-      #         owner: context.repo.owner,
-      #         repo: 'learn_lambda_docker',
-      #         ref: 'main',
-      #         workflow_id: 'cd.yml',
-      #         inputs: {
-      #           env: 'dev',
-      #           images: '{"${{ env.IMAGE_NAME }}": "${{ env.IMAGE_TAG }}"}'
-      #         }
-      #       })
+      - name: Invoke CD workflow
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT_WORKFLOW_DISPATCH }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'learn_lambda_docker',
+              ref: 'main',
+              workflow_id: 'cd.yml',
+              inputs: {
+                env: 'dev',
+                images: '{"${{ env.IMAGE_NAME }}": "${{ env.IMAGE_TAG }}"}'
+              }
+            })
