@@ -76,6 +76,10 @@ jobs:
           docker push --all-tags $DOCKER_REGISTRY_ENDPOINT/$IMAGE_NAME
           printf "IMAGE_NAME=$IMAGE_NAME\nIMAGE_TAG=$IMAGE_TAG\n" >> "$GITHUB_OUTPUT"
 
+    outputs:
+      IMAGE_NAME: ${{ steps.build-publish-docker.outputs.IMAGE_NAME }}
+      IMAGE_TAG: ${{ steps.build-publish-docker.outputs.IMAGE_TAG }}
+
   post-build:
     needs: build
     runs-on: ubuntu-latest
@@ -84,9 +88,12 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Tag Github repo
         run: |
-          GIT_TAG="v${{ steps.build-publish-docker.outputs.IMAGE_TAG }}"
+          GIT_TAG="v${{ needs.build.outputs.IMAGE_TAG }}"
           git config --global user.email "github-action@users.noreply.github.com"
           git config --global user.name "Github Action"
           git tag -a "$GIT_TAG" -m "tagged by GHA $GIT_TAG"
