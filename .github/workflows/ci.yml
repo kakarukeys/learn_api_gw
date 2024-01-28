@@ -5,17 +5,17 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
 env:
   AWS_REGION: ap-southeast-1
   BUILD_ROLE_ARN: arn:aws:iam::572512847063:role/GHA-Build-Role
 
 jobs:
- build:
+  build:
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout code
@@ -76,6 +76,14 @@ jobs:
           docker push --all-tags $DOCKER_REGISTRY_ENDPOINT/$IMAGE_NAME
           printf "IMAGE_NAME=$IMAGE_NAME\nIMAGE_TAG=$IMAGE_TAG\n" >> "$GITHUB_OUTPUT"
 
+  post-build:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
       - name: Tag Github repo
         run: |
           GIT_TAG="v${{ steps.build-publish-docker.outputs.IMAGE_TAG }}"
