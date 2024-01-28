@@ -64,6 +64,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and publish docker image
+        id: build-publish-docker
         env:
           DOCKER_REGISTRY_ENDPOINT: ${{ steps.login-ecr.outputs.registry }}
         run: |
@@ -74,3 +75,9 @@ jobs:
           docker build --tag $DOCKER_REGISTRY_ENDPOINT/$IMAGE_NAME:$IMAGE_TAG .
           docker push --all-tags $DOCKER_REGISTRY_ENDPOINT/$IMAGE_NAME
           printf "IMAGE_NAME=$IMAGE_NAME\nIMAGE_TAG=$IMAGE_TAG\n" >> "$GITHUB_OUTPUT"
+
+      - name: Tag Github repo
+        run: |
+          GIT_TAG="v${{ stips.build-publish-docker.outputs.IMAGE_TAG }}"
+          git tag -a "$GIT_TAG" -m "tagged by GHA $GIT_TAG"
+          git push origin "$GIT_TAG"

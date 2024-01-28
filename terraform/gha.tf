@@ -12,25 +12,27 @@ module "iam_github_oidc_provider" {
 }
 
 data "aws_iam_policy_document" "ecr-publish-policy-document" {
+  # follows https://github.com/aws-actions/amazon-ecr-login#ecr-private
+
+  statement {
+    effect = "Allow"
+  
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+
+    resources = ["*"]
+  }
+
   statement {
     effect = "Allow"
 
-    # follows https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonEC2ContainerRegistryPowerUser.html
     actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:BatchGetImage",
       "ecr:CompleteLayerUpload",
-      "ecr:DescribeImages",
-      "ecr:DescribeImageScanFindings",
-      "ecr:DescribeRepositories",
-      "ecr:GetAuthorizationToken",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:GetLifecyclePolicy",
-      "ecr:GetLifecyclePolicyPreview",
-      "ecr:GetRepositoryPolicy",
       "ecr:InitiateLayerUpload",
-      "ecr:ListImages",
-      "ecr:ListTagsForResource",
       "ecr:PutImage",
       "ecr:UploadLayerPart",
     ]

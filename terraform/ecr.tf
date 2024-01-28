@@ -1,7 +1,8 @@
 locals {
-  # any ECR repo listed here will be created and open to all Lambdas' image pull
+  # any ECR repo listed here will be created and is open to all Lambdas' image pull
   ecr-repo-names = [
     "example",
+    "learn-api-gw",
   ]
 }
 
