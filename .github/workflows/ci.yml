@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-env:
-  AWS_REGION: ap-southeast-1
-  BUILD_ROLE_ARN: arn:aws:iam::572512847063:role/GHA-Build-Role
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +12,10 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
+    env:
+      AWS_REGION: ap-southeast-1
+      BUILD_ROLE_ARN: arn:aws:iam::572512847063:role/GHA-Build-Role
 
     steps:
       - name: Checkout code
@@ -87,14 +87,27 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      IMAGE_NAME: "${{ needs.build.outputs.IMAGE_NAME }}"
+      IMAGE_TAG: "${{ needs.build.outputs.IMAGE_TAG }}"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Tag Github repo
         run: |
-          GIT_TAG="v${{ needs.build.outputs.IMAGE_TAG }}"
+          GIT_TAG="v${{ env.IMAGE_TAG }}"
           git config --global user.email "github-action@users.noreply.github.com"
           git config --global user.name "Github Action"
           git tag -a "$GIT_TAG" -m "tagged by GHA $GIT_TAG"
           git push origin "$GIT_TAG"
+
+      - name: Invoke CD workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          repo: kakarukeys/learn_lambda_docker
+          ref: main
+          workflow: cd.yaml
+          inputs: '{"image-tag-${{ env.IMAGE_NAME }}": "env.IMAGE_TAG"}'
+          token: "${{ secrets.GITHUB_TOKEN }}"
