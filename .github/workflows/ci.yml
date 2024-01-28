@@ -12,9 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: read Python version
-        id: read-python-version
-        run: echo "version=${cat .python-version}\n" >> "$GITHUB_OUTPUT"
+      - id: read-python-version
+        run: echo "version=$(cat .python-version)\n" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@v5
         with:
