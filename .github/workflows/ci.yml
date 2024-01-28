@@ -108,6 +108,6 @@ jobs:
         with:
           repo: kakarukeys/learn_lambda_docker
           ref: main
-          workflow: cd.yaml
+          workflow: cd.yml
           inputs: '{"env": "dev", "images": "{\"${{ env.IMAGE_NAME }}\": \"${{ env.IMAGE_TAG }}\"}"}'
           token: "${{ secrets.GITHUB_TOKEN }}"
