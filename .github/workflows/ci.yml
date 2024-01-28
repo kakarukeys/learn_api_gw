@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - id: read-python-version
-        run: echo "version=$(cat .python-version)\n" >> "$GITHUB_OUTPUT"
+        run: printf "version=$(cat .python-version)\n" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@v5
         with:
