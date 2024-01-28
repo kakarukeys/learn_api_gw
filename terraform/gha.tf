@@ -45,7 +45,7 @@ resource "aws_iam_policy" "ecr-publish-policy" {
   policy = data.aws_iam_policy_document.ecr-publish-policy-document.json
 }
 
-module "iam_iam-github-oidc-role" {
+module "gha-build-role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-role"
   version = "~> 5.33.1"
 
