@@ -10,21 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - id: read-python-version
+      - name: Read Python version
+        id: read-python-version
         run: printf "version=$(cat .python-version)\n" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-python@v5
+      - name: Install Python
+        uses: actions/setup-python@v5
         with:
           python-version: "${{ steps.read-python-version.outputs.version }}"
 
-      - name: Restore python virtual environment
+      - name: Restore Python virtual environment
         uses: actions/cache/restore@v4
         with:
           path: .venv
           key: ${{ hashFiles('poetry.lock') }}
 
-      - name: Install project dependencies
-        run: |
-          poetry install --no-root
+      - name: Install Poetry and project dependencies
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-in-project: true
