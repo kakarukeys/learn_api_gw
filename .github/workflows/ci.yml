@@ -18,18 +18,22 @@ jobs:
         run: printf "version=$(cat .python-version)\n" >> "$GITHUB_OUTPUT"
 
       - name: Install Python
+        id: install-python
         uses: actions/setup-python@v5
         with:
           python-version: "${{ steps.read-python-version.outputs.version }}"
-
-      - name: Restore Python virtual environment
-        uses: actions/cache/restore@v4
-        with:
-          path: .venv
-          key: ${{ hashFiles('poetry.lock') }}
 
       - name: Install Poetry and project dependencies
         uses: snok/install-poetry@v1
         with:
           version: 1.7.1
           virtualenvs-in-project: true
+
+      - name: Restore Python virtual environment
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.install-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
