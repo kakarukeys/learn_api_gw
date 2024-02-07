@@ -15,7 +15,9 @@ jobs:
 
     env:
       AWS_REGION: ap-southeast-1
-      BUILD_ROLE_ARN: arn:aws:iam::572512847063:role/GHA-Build-Role
+      AWS_ACCOUNT_ID: 572512847063
+      BUILD_ROLE_NAME: GHA-Build-Role
+      LAMBDA_EXTENSION_NAME_TAG: AWS-Parameters-and-Secrets-Lambda-Extension:11
 
     steps:
       - name: Checkout code
@@ -57,12 +59,26 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.BUILD_ROLE_ARN }}
+          role-to-assume: "arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.BUILD_ROLE_NAME }}"
           role-session-name: run-${{ github.run_id }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Restore Lambda extension from cache
+        uses: actions/cache@v4
+        with:
+          path: extension.zip
+          key: ${{ env.LAMBDA_EXTENSION_NAME_TAG }}
+
+      - name: Download Lambda extension
+        if: ${{ hashFiles('extension.zip') != '' }}
+        run: |
+          aws lambda get-layer-version-by-arn \
+            --arn arn:aws:lambda:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:layer:${{ env.LAMBDA_EXTENSION_NAME_TAG }} \
+            | python -c 'import sys, json; print(json.load(sys.stdin)["Content"]["Location"])' \
+            | xargs curl -o extension.zip
 
       - name: Build and publish docker image
         id: build-publish-docker
