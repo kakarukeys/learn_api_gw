@@ -73,7 +73,7 @@ jobs:
           key: ${{ env.LAMBDA_EXTENSION_NAME_TAG }}
 
       - name: Download Lambda extension
-        if: ${{ hashFiles('extension.zip') != '' }}
+        if: ${{ hashFiles('extension.zip') == '' }}
         run: |
           aws lambda get-layer-version-by-arn \
             --arn arn:aws:lambda:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:layer:${{ env.LAMBDA_EXTENSION_NAME_TAG }} \
