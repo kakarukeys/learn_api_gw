@@ -26,3 +26,4 @@ docker push 572512847063.dkr.ecr.ap-southeast-1.amazonaws.com/my-ecr-repository:
 ```
 
 run the complete terraform script
+
