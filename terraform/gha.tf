@@ -18,7 +18,8 @@ data "aws_iam_policy_document" "ecr-publish-policy-document" {
     effect = "Allow"
   
     actions = [
-      "ecr:GetAuthorizationToken"
+      "ecr:GetAuthorizationToken",
+      "lambda:GetLayerVersion",
     ]
 
     resources = ["*"]

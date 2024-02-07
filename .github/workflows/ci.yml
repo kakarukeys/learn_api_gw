@@ -76,7 +76,7 @@ jobs:
         if: ${{ hashFiles('extension.zip') == '' }}
         run: |
           aws lambda get-layer-version-by-arn \
-            --arn arn:aws:lambda:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:layer:${{ env.LAMBDA_EXTENSION_NAME_TAG }} \
+            --arn arn:aws:lambda:${{ env.AWS_REGION }}:044395824272:layer:${{ env.LAMBDA_EXTENSION_NAME_TAG }} \
             | python -c 'import sys, json; print(json.load(sys.stdin)["Content"]["Location"])' \
             | xargs curl -o extension.zip
 
